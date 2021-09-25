@@ -22,10 +22,10 @@ vector<int> height;
 class Point
 {
 private:
-    double x;
-    double y;
-
-    Point(double X, double Y) {
+    int x;
+    int y;
+public:
+    Point(int X, int Y) {
         x = X;
         y = Y;
     }
@@ -42,6 +42,11 @@ private:
     int lengthSquared() {
         return x * x + y * y;
     }
+
+    bool operator==(Point);
+    bool operator!=(Point);
+
+    double angle(Point);
 
 
 };
@@ -63,12 +68,52 @@ int Point::operator*(Point second) {
     return x * second.x + y * second.y;
 }
 
+double Point::angle(Point second) {
+    double len1 = 0,
+            len2 = 0,
+            Area = 0;
+    Area = Point(x, y) ^ second;
+    len1 = sqrt(lengthSquared());
+    len2 = sqrt(second.lengthSquared());
+
+    double sin;
+    sin = Area / (len1 * len2);
+
+    return asin(sin);
+}
+
 
 int Point::operator^(Point second) {
     return x * second.y - y * second.x;
 }
 
+bool Point::operator==(Point second) {
+    if(second.x == x && second.y == y) {
+        return true;
+    }
+    return false;
+}
 
+bool Point::operator!=(Point second) {
+    if (second.x != x || second.y != y) {
+        return true;
+    }
+    return false;
+}
+
+double angle(Point x, Point y) {
+    double len1 = 0,
+            len2 = 0,
+            Area = 0;
+    Area = x ^ y;
+    len1 = sqrt(x.lengthSquared());
+    len2 = sqrt(y.lengthSquared());
+
+    double sin;
+    sin = Area / (len1 * len2);
+
+    return asin(sin);
+}
 
 
 signed main()
@@ -77,4 +122,6 @@ signed main()
     cin.tie(nullptr);
     cout.tie(nullptr);
     cout.precision(12);
+
+
 }
