@@ -28,6 +28,9 @@ public:
 
     }
 
+    int get_X() { return x; }
+    int get_Y() { return y; }
+
     Point operator+(Point);
     Point operator-(Point);
     Point operator*(int);
@@ -36,15 +39,18 @@ public:
     int lengthSquared() {
         return x * x + y * y;
     }
-
     bool operator==(Point);
     bool operator!=(Point);
 
     double angle(Point);
 
-
+    friend ostream& operator<<(ostream&, const Point&);
 };
 
+
+ostream& operator<<(ostream& out, const Point& a) {
+    return out << a.x << " - X. " << a.y << " - Y.";
+}
 
 Point Point::operator+(Point second) {
     return Point(x + second.x, y + second.y);
@@ -117,5 +123,25 @@ signed main()
     cout.tie(nullptr);
     cout.precision(12);
 
+    Point a(2, 2);
 
+    cout << a.get_X() << " - X, not in function." << a.get_Y() << " - Y, not in function." << endl;
+
+    Point b(3, 3);
+
+    Point C = a + b;
+    cout << C << endl;
+
+    Point D = a - b;
+    cout << D << endl;
+    int scalar = 0;
+    cout << a * 10 << " Multiplication." << endl;
+
+    cout << a * b << " - Scalar Multiplication" << endl;
+    int temp = a ^ b;
+    cout << temp << " - Non-scalar multiplication" << endl;
+
+    cout << a.angle(b) << " - Angle between them " << endl;
+
+    cout << sqrt(a.lengthSquared()) << " - Length, in double format" << endl;
 }
