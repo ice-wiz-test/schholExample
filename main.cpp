@@ -13,12 +13,6 @@
 #include <fstream>
 #include <set>
 using namespace std;
-const int INF = 1e9 + 7;
-#define int long long
-vector<int> massiv;
-vector<int> leftToRight;
-vector<int> rightToLeft;
-vector<int> height;
 class Point
 {
 private:
