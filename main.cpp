@@ -36,12 +36,11 @@ private:
 
     Point operator+(Point);
     Point operator-(Point);
-    Point operator*(double);
-    Point operator/(double);
+    Point operator*(int);
     int operator*(Point);
     int operator^(Point);
-    int length() {
-        return sqrt(x * x + y * y);
+    int lengthSquared() {
+        return x * x + y * y;
     }
 
 
@@ -56,7 +55,7 @@ Point Point::operator-(Point second) {
     return Point(x - second.x, y - second.y);
 }
 
-Point Point::operator*(double val) {
+Point Point::operator*(int val) {
     return Point(x * val, y * val);
 }
 
@@ -64,9 +63,7 @@ int Point::operator*(Point second) {
     return x * second.x + y * second.y;
 }
 
-Point Point::operator/(double val) {
-    return Point(x / val, y / val);
-}
+
 int Point::operator^(Point second) {
     return x * second.y - y * second.x;
 }
