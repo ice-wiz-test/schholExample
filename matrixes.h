@@ -23,6 +23,10 @@ public:
 
 	const vector<T>& operator[](int i) { return matrix[i]; }
 
+	const Matrix operator*(const Matrix&) const;
+
+	const Matrix transpose();
+
 	template <typename Type> friend istream& operator >>(istream&, Matrix<Type>&);
 	template <typename Type> friend ostream& operator <<(ostream&, Matrix<Type>&);
 };
@@ -55,6 +59,42 @@ const Matrix<T> Matrix<T>::operator+(const Matrix& a) const {
 	}
 	return res;
 }
+
+template<typename T> 
+
+
+const Matrix<T> Matrix<T>::transpose() {
+	vector<vector<T>> res;
+	res.assign(Y, vector<T>(X, 0));
+
+	for (int i = 0; i < X; ++i) {
+		for (int j = 0; j < Y; ++j) {
+			res[i][j] = matrixj][i];
+		}
+	}
+
+	return Matrix(res);
+}
+
+template<typename T>
+
+
+const Matrix<T> Matrix<T>::operator*(const Matrix& a) const {
+	if (Y != a.Y) throw std::string("When multiplying matrixes A and B, Aj should be equal to Bi");
+	vector<vector<T>> res;
+	res.assign(X, vector<T>(a.Y, 0));
+	for (int i = 0; i < X; ++i) {
+		for (int j = 0; j < a.Y; ++j) {
+			for (int k = 0; k < Y; ++k) {
+				res[i][j] = res[i][j] + matrix[i][k] * a.matrix[k][j];
+			}
+		}
+	}
+
+	return Matrix(res);
+}
+
+
 template<typename T>
 
 const Matrix<T> Matrix<T>::operator*(T k) const {
@@ -85,5 +125,9 @@ ostream& operator>>(ostream& out, Matrix<T>& a) {
 	}
 	return out;
 }
+
+template<typename T>
+
+
 #endif // ! MATRIXES
 
