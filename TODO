@@ -1,0 +1,5 @@
+1. Look at logic inside the angle function. At the moment, it creates a new instance of an object every time it is called, which could be memory-disastrous in the future.
+
+2. Add functions to check input for correctness.
+
+3. Visualise all vectors.
