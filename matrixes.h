@@ -9,9 +9,9 @@ using namespace std;
 template<typename T>
 
 class Matrix {
-	int X, Y;
 	vector<vector<T>> matrix;
 public:
+	int X, Y;
 	Matrix(vector<vector<T>>);
 	Matrix(int XX, int YY);
 
@@ -20,6 +20,8 @@ public:
 	const Matrix operator+(const Matrix&) const;
 
 	const Matrix operator*(T) const;
+
+	const vector<T>& operator[](int i) { return matrix[i]; }
 
 	template <typename Type> friend istream& operator >>(istream&, Matrix<Type>&);
 	template <typename Type> friend ostream& operator <<(ostream&, Matrix<Type>&);
@@ -42,18 +44,18 @@ Matrix<T>::Matrix(int XX, int YY) {
 template<typename T>
 
 const Matrix<T> Matrix<T>::operator+(const Matrix& a) const {
-	if(X != a.X || Y != a.Y) throw std::string "Sizes are not equal, try again".
+	if (X != a.X || Y != a.Y) throw std::string ("Sizes are not equal, try again.");
 	vector<vector<T>> res;
-	res.assign(XX, vector<T>(YY, 0));
+	res.assign(X, vector<T>(Y, 0));
 
-	for (int i = 0; i < XX; ++i) {
-		for (int j = 0; j < YY; ++j) {
+	for (int i = 0; i < X; ++i) {
+		for (int j = 0; j < Y; ++j) {
 			res[i][j] = a.matrix[i][j] + matrix[i][j];
 		}
 	}
 	return res;
 }
-
+template<typename T>
 
 const Matrix<T> Matrix<T>::operator*(T k) const {
 	vector<vector<T>> res;
@@ -67,8 +69,8 @@ const Matrix<T> Matrix<T>::operator*(T k) const {
 
 template <typename T>
 istream& operator>>(istream& in, Matrix<T>& a) {
-	for (int i = 0; i < X; ++i) {
-		for (int j = 0; j < Y; ++j) {
+	for (int i = 0; i < a.X; ++i) {
+		for (int j = 0; j < a.Y; ++j) {
 			in >> a.matrix[i][j];
 		}
 	}
@@ -76,8 +78,8 @@ istream& operator>>(istream& in, Matrix<T>& a) {
 }
 template <typename T>
 ostream& operator>>(ostream& out, Matrix<T>& a) {
-	for (int i = 0; i < X; ++i) {
-		for (int j = 0; j < Y; ++j) {
+	for (int i = 0; i < a.X; ++i) {
+		for (int j = 0; j < a.Y; ++j) {
 			out >> a.matrix[i][j];
 		}
 	}
