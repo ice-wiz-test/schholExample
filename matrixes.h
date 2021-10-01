@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <vector>
- 
+
 using namespace std;
 
 template<typename T>
@@ -27,6 +27,8 @@ public:
 
 	const Matrix transpose();
 
+	const Matrix raiseToPower(int n);
+
 	template <typename Type> friend istream& operator >>(istream&, Matrix<Type>&);
 	template <typename Type> friend ostream& operator <<(ostream&, Matrix<Type>&);
 };
@@ -48,7 +50,7 @@ Matrix<T>::Matrix(int XX, int YY) {
 template<typename T>
 
 const Matrix<T> Matrix<T>::operator+(const Matrix& a) const {
-	if (X != a.X || Y != a.Y) throw std::string ("Sizes are not equal, try again.");
+	if (X != a.X || Y != a.Y) throw std::string("Sizes are not equal, try again.");
 	vector<vector<T>> res;
 	res.assign(X, vector<T>(Y, 0));
 
@@ -60,7 +62,35 @@ const Matrix<T> Matrix<T>::operator+(const Matrix& a) const {
 	return res;
 }
 
-template<typename T> 
+template<typename T>
+
+
+const Matrix<T> Matrix<T>::raiseToPower(int n) {
+	Matrix<T> res = Matrix(matrix);
+	return binPower(n, res);
+}
+
+
+template<typename T>
+
+Matrix<T> binPower(int n, Matrix<T>& a ) {
+	if (n == 1) return a;
+	if (n == 2) return a * a;
+
+	if (n % 2 == 0) {
+		Matrix<T> fir = binPower(n / 2, a);
+		return fir * fir;
+	}
+
+	if (n % 2 == 0) {
+		Matrix<T> fir = binPower(n / 2, a);
+		Matrix<T> sec = binPower(n / 2, a);
+		sec = sec * a;
+		return fir * sec;
+	}
+}
+template<typename T>
+
 
 
 const Matrix<T> Matrix<T>::transpose() {
@@ -69,7 +99,7 @@ const Matrix<T> Matrix<T>::transpose() {
 
 	for (int i = 0; i < X; ++i) {
 		for (int j = 0; j < Y; ++j) {
-			res[i][j] = matrixj][i];
+			res[i][j] = matrix[j][i];
 		}
 	}
 
@@ -99,6 +129,7 @@ template<typename T>
 
 const Matrix<T> Matrix<T>::operator*(T k) const {
 	vector<vector<T>> res;
+	res.assign(X, vector<T>(Y, 0));
 	for (int i = 0; i < X; ++i) {
 		for (int j = 0; j < Y; ++j) {
 			res[i][j] = matrix[i][j] * k;
@@ -126,8 +157,7 @@ ostream& operator>>(ostream& out, Matrix<T>& a) {
 	return out;
 }
 
-template<typename T>
 
 
-#endif // ! MATRIXES
 
+#endif // ! MATRIXES#pragma once
