@@ -80,4 +80,18 @@ signed main()
 		}
 		cout << endl;
 	}
+	vector<vector<int>> toUse(3, vector<int>(3, 0));
+	toUse[0][0] = 1;
+	toUse[0][1] = 2;
+	toUse[1][0] = 3;
+	toUse[1][1] = 4;
+	toUse[2][0] = 5;
+	toUse[1][2] = 17;
+	toUse[0][2] = 19;
+	toUse[2][2] = 213;
+	toUse[2][1] = 4;
+
+	Multi = Matrix<int>(toUse);
+
+	cout << Multi.getDeterminant() << endl;
 }

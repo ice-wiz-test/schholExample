@@ -29,10 +29,46 @@ public:
 
 	const Matrix raiseToPower(int n);
 
+	const int getDeterminant();
+
 	template <typename Type> friend istream& operator >>(istream&, Matrix<Type>&);
 	template <typename Type> friend ostream& operator <<(ostream&, Matrix<Type>&);
 };
 
+template<typename T> 
+
+int getDet(vector<vector<T>>& matrix, int size) {
+	int deter = 0;
+	vector<vector<T>> submatrix;
+	submatrix.assign(size - 1, vector<T>(size - 1, 0));
+
+	if (size == 2) {
+		return matrix[1][1] * matrix[0][0] - matrix[1][0] * matrix[0][1];
+	}
+	else {
+		for (int x = 0; x < size; ++x) {
+			int subI = 0;
+			for (int i = 1; i < size; ++i) {
+				int subJ = 0;
+				for (int j = 0; j < size; ++j) {
+					if (j == x) continue;
+					submatrix[subI][subJ] = matrix[i][j];
+					subJ++;
+				}
+				subI++;
+			}
+			deter = deter + (pow(-1, x) * matrix[0][x] * getDet(submatrix, size - 1) );
+		}
+	}
+	return deter;
+}
+
+template<typename T>
+
+const int Matrix<T>::getDeterminant() {
+	vector<vector<T>> vect = matrix;
+	return getDet(vect, X);
+}
 template<typename T>
 Matrix<T>::Matrix(vector<vector<T>> vect) {
 	matrix = vect;
