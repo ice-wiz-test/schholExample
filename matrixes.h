@@ -31,11 +31,13 @@ public:
 
 	const int getDeterminant();
 
+	const int getDeterminantGauss();
+
 	template <typename Type> friend istream& operator >>(istream&, Matrix<Type>&);
 	template <typename Type> friend ostream& operator <<(ostream&, Matrix<Type>&);
 };
 
-template<typename T> 
+template<typename T>
 
 int getDet(vector<vector<T>>& matrix, int size) {
 	int deter = 0;
@@ -57,7 +59,7 @@ int getDet(vector<vector<T>>& matrix, int size) {
 				}
 				subI++;
 			}
-			deter = deter + (pow(-1, x) * matrix[0][x] * getDet(submatrix, size - 1) );
+			deter = deter + (pow(-1, x) * matrix[0][x] * getDet(submatrix, size - 1));
 		}
 	}
 	return deter;
@@ -69,6 +71,59 @@ const int Matrix<T>::getDeterminant() {
 	vector<vector<T>> vect = matrix;
 	return getDet(vect, X);
 }
+
+
+template<typename T>
+
+T getDetGauss(vector<vector<T>> matr, int size) {
+	double coeff;
+	for (int k = 0; k < size; ++k) {
+		for (int j = k + 1; j < size; ++j) {
+			if (matr[k][k] == 0) {
+				bool b = false;
+				for (int i = k + 1; i < size; ++i) {
+					if (matr[i][k] != 0) {
+						b = true;
+						for (int m = k; m < size; ++m) {
+							swap(matr[k][m], matr[i][m]);
+						}
+					}
+				}
+
+				if (!b) {
+					throw std::string ("This system does not have a solution");
+					return 0;
+				}
+			}
+				coeff = matr[j][k] / matr[k][k];
+
+				for (int i = k + 1; i < size; ++i) {
+					matr[j][i] = matr[j][i] - matr[k][i] * coeff;
+				}
+			
+		}
+	}
+
+	double res = 1; 
+
+	for (int k = 0; k < size; ++k) {
+		res = res * matr[k][k];
+	}
+	return res;
+}
+
+template<typename T> 
+
+const int Matrix<T>::getDeterminantGauss() {
+	vector<vector<T>> vect = matrix;
+	try {
+		return getDetGauss(vect, X);
+	}
+	catch (string s) {
+		cout << s << endl;
+	}
+}
+
 template<typename T>
 Matrix<T>::Matrix(vector<vector<T>> vect) {
 	matrix = vect;
@@ -109,7 +164,7 @@ const Matrix<T> Matrix<T>::raiseToPower(int n) {
 
 template<typename T>
 
-Matrix<T> binPower(int n, Matrix<T>& a ) {
+Matrix<T> binPower(int n, Matrix<T>& a) {
 	if (n == 1) return a;
 	if (n == 2) return a * a;
 

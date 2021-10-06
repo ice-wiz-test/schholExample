@@ -21,7 +21,7 @@ signed main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);
 	cout.tie(0);
-	vector<vector<int>> example(5, vector<int> (5, 0));
+	vector<vector<int>> example(5, vector<int>(5, 0));
 	for (int i = 0; i < 5; ++i) {
 		for (int j = 0; j < 5; ++j) {
 			example[i][j] = i * 5 + j;
@@ -47,7 +47,7 @@ signed main()
 
 		cout << endl;
 	}
-	
+
 
 	Multi = m + m;
 	for (int i = 0; i < 5; ++i) {
@@ -80,18 +80,21 @@ signed main()
 		}
 		cout << endl;
 	}
-	vector<vector<int>> toUse(3, vector<int>(3, 0));
-	toUse[0][0] = 1;
+	vector<vector<double>> toUse(3, vector<double>(3, 0));
+	toUse[0][0] = 11;
 	toUse[0][1] = 2;
-	toUse[1][0] = 3;
-	toUse[1][1] = 4;
-	toUse[2][0] = 5;
+	toUse[1][0] = 4;
+	toUse[1][1] = 56;
+	toUse[2][0] = 13;
 	toUse[1][2] = 17;
 	toUse[0][2] = 19;
-	toUse[2][2] = 213;
-	toUse[2][1] = 4;
+	toUse[2][2] = 21;
+	toUse[2][1] = 298;
 
-	Multi = Matrix<int>(toUse);
+	
+	Matrix<double> helper = Matrix<double>(toUse);
 
-	cout << Multi.getDeterminant() << endl;
+	cout << helper.getDeterminant() << endl;
+
+	cout << helper.getDeterminantGauss() << endl;
 }
