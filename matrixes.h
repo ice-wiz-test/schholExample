@@ -37,6 +37,152 @@ public:
 	template <typename Type> friend ostream& operator <<(ostream&, Matrix<Type>&);
 };
 
+template<typename T> 
+
+vector<T> getAnswersTo(vector<vector<T>>& matr, int size) {
+	cout << size << " SOZE " << endl;
+	double coeff;
+	for (int k = 0; k < size; ++k) {
+		for (int j = k + 1; j < size; ++j) {
+			if (matr[k][k] == 0) {
+				bool b = false;
+				for (int i = k + 1; i < size; ++i) {
+					if (matr[i][k] != 0) {
+						b = true;
+						for (int m = k; m < size + 1;  ++m) {
+							swap(matr[k][m], matr[i][m]);
+						}
+					}
+				}
+
+				if (!b) {
+					throw std::string("This system does not have a solution");
+				}
+			}
+			coeff = matr[j][k] / matr[k][k];
+
+			for (int i = k; i < size + 1; ++i) {
+				matr[j][i] = matr[j][i] - matr[k][i] * coeff;
+			}
+
+		}
+	}
+
+	double res = 1;
+
+	for (int k = 0; k < size; ++k) {
+		res = res * matr[k][k];
+	}
+
+	for (auto x : matr) {
+		for (auto y : x) {
+			cout << y << " ";
+		}
+		cout << endl;
+	}
+	vector<T> answers;
+	for (int k = size - 1; k >= 0; --k) {
+		if (answers.size() == 0) {
+			answers.push_back(matr[k][k + 1] / matr[k][k]);
+		}
+		else {
+			for (int j = size - 1; j > k; j--) {
+				matr[k][size] -= matr[k][j] * answers[size - j - 1];
+			}
+			answers.push_back(matr[k][size] / matr[k][k]);
+		}
+	}
+	return answers;
+}
+
+
+template<typename T>
+
+T getDetGauss(vector<vector<T>>& matr, int size) {
+	double coeff;
+	for (int k = 0; k < size; ++k) {
+		for (int j = k + 1; j < size; ++j) {
+			if (matr[k][k] == 0) {
+				bool b = false;
+				for (int i = k + 1; i < size; ++i) {
+					if (matr[i][k] != 0) {
+						b = true;
+						for (int m = k; m < size; ++m) {
+							swap(matr[k][m], matr[i][m]);
+						}
+					}
+				}
+
+				if (!b) {
+					throw std::string("This system does not have a solution");
+					return 0;
+				}
+			}
+			coeff = matr[j][k] / matr[k][k];
+
+			for (int i = k; i < size; ++i) {
+				matr[j][i] = matr[j][i] - matr[k][i] * coeff;
+			}
+
+		}
+	}
+
+	double res = 1;
+
+	for (int k = 0; k < size; ++k) {
+		res = res * matr[k][k];
+	}
+	return res;
+}
+template<typename T> 
+
+vector<T> solveSystem() {
+	vector<vector<T>> helpMe;
+	int counter = 0;
+	cout << "Please output the amount of equations you wish to input" << endl;
+	cin >> counter;
+
+	helpMe.resize(counter);
+
+	for (int i = 0; i < counter; ++i) {
+		cout << "Please enter the amount of letters you wish to solve for" << endl;
+		int temp = 0;
+		cin >> temp;
+		T coeff;
+		for (int k = 0; k < temp; ++k) {
+			cin >> coeff;
+			helpMe[i].push_back(coeff);
+		}
+		cout << "Please enter the result" << endl;
+		T result;
+		cin >> result;
+		helpMe[i].push_back(result);
+	}
+	for (auto x : helpMe) {
+		for (auto y : x) {
+			cout << y << " ";
+		}
+		cout << endl;
+	}
+	try {
+		return getAnswersTo(helpMe, helpMe.size());
+	}
+	catch (string s) {
+		cout << s << endl;
+	}
+}
+
+template<typename T>
+
+vector<T> solveSystemProm() {
+	try {
+		vector<T> answers = solveSystem<T>();
+		return answers;
+	}
+	catch (string s) {
+		cout << s << endl;
+	}
+}
 template<typename T>
 
 int getDet(vector<vector<T>>& matrix, int size) {
@@ -70,46 +216,6 @@ template<typename T>
 const int Matrix<T>::getDeterminant() {
 	vector<vector<T>> vect = matrix;
 	return getDet(vect, X);
-}
-
-
-template<typename T>
-
-T getDetGauss(vector<vector<T>> matr, int size) {
-	double coeff;
-	for (int k = 0; k < size; ++k) {
-		for (int j = k + 1; j < size; ++j) {
-			if (matr[k][k] == 0) {
-				bool b = false;
-				for (int i = k + 1; i < size; ++i) {
-					if (matr[i][k] != 0) {
-						b = true;
-						for (int m = k; m < size; ++m) {
-							swap(matr[k][m], matr[i][m]);
-						}
-					}
-				}
-
-				if (!b) {
-					throw std::string ("This system does not have a solution");
-					return 0;
-				}
-			}
-				coeff = matr[j][k] / matr[k][k];
-
-				for (int i = k + 1; i < size; ++i) {
-					matr[j][i] = matr[j][i] - matr[k][i] * coeff;
-				}
-			
-		}
-	}
-
-	double res = 1; 
-
-	for (int k = 0; k < size; ++k) {
-		res = res * matr[k][k];
-	}
-	return res;
 }
 
 template<typename T> 

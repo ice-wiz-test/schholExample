@@ -97,4 +97,10 @@ signed main()
 	cout << helper.getDeterminant() << endl;
 
 	cout << helper.getDeterminantGauss() << endl;
+
+	vector<double> mm = solveSystemProm<double>();
+
+	for (auto x : mm) {
+		cout << x << " ";
+	}
 }
