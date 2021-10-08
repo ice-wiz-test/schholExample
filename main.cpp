@@ -103,4 +103,15 @@ signed main()
 	for (auto x : mm) {
 		cout << x << " ";
 	}
+
+	helper = Matrix<double>(toUse);
+
+	vector<vector<double>> ans = getOtherMatrix<double>(toUse);
+
+	for (auto x : ans) {
+		for (auto y : x) {
+			cout << y << " ";
+		}
+		cout << endl;
+	}
 }

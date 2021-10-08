@@ -98,6 +98,20 @@ vector<T> getAnswersTo(vector<vector<T>>& matr, int size) {
 
 template<typename T>
 
+vector<vector<T>> transpose(vector<vector<T>>& helpMe) {
+	vector<vector<T>> ans;
+	ans.assign(helpMe.size(), vector<T>(helpMe.size(), 0));
+	for (int i = 0; i < helpMe.size(); ++i) {
+		for (int j = 0; j < helpMe.size(); ++j) {
+			ans[i][j] = helpMe[j][i];
+		}
+	}
+
+	return ans;
+}
+
+template<typename T>
+
 T getDetGauss(vector<vector<T>>& matr, int size) {
 	double coeff;
 	for (int k = 0; k < size; ++k) {
@@ -209,6 +223,72 @@ int getDet(vector<vector<T>>& matrix, int size) {
 		}
 	}
 	return deter;
+}
+
+template<typename T>
+
+vector<vector<T>> getOtherMatrix(vector<vector<T>>& vect) {
+	vector<vector<T>> ed;
+	double coeff;
+	ed.assign(vect.size(), vector<T>(vect.size(), 0));
+	for (int i = 0; i < ed.size(); ++i) {
+		ed[i][i] = 1;
+	}
+	for (int k = 0; k < vect.size(); ++k) {
+		for (int j = k + 1; j < vect.size(); ++j) {
+			if (vect[k][k] == 0) {
+				bool b = false;
+				for (int i = k + 1; i < vect.size(); ++i) {
+					if (vect[i][k] != 0) {
+						b = true;
+						for (int s = 0; s < vect.size(); ++i) {
+							swap(vect[k][s], vect[i][s]);
+							swap(ed[k][s], ed[i][s]);
+						}
+					}
+				}
+				if (!b) {
+					throw std::string ("I do not know how, but you broke this function");
+				}
+			}
+
+			coeff = vect[j][k] / vect[k][k];
+
+			for (int i = 0; i < vect.size(); ++i) {
+				vect[j][i] = vect[j][i] - vect[k][i] * coeff;
+				ed[j][i] = ed[j][i] - ed[k][i] * coeff;
+			}
+		}
+	}
+	vect = transpose<double>(vect);
+
+	for (int k = 0; k < vect.size(); ++k) {
+		for (int j = k + 1; j < vect.size(); ++j) {
+			if (vect[k][k] == 0) {
+				bool b = false;
+				for (int i = k + 1; i < vect.size(); ++i) {
+					if (vect[i][k] != 0) {
+						b = true;
+						for (int s = 0; s < vect.size(); ++i) {
+							swap(vect[k][s], vect[i][s]);
+							swap(ed[k][s], ed[i][s]);
+						}
+					}
+				}
+				if (!b) {
+					throw std::string("I do not know how, but you broke this function");
+				}
+			}
+
+			coeff = vect[j][k] / vect[k][k];
+
+			for (int i = 0; i < vect.size(); ++i) {
+				vect[j][i] = vect[j][i] - vect[k][i] * coeff;
+				ed[j][i] = ed[j][i] - ed[k][i] * coeff;
+			}
+		}
+	}
+	return ed;
 }
 
 template<typename T>
@@ -348,7 +428,7 @@ template <typename T>
 ostream& operator>>(ostream& out, Matrix<T>& a) {
 	for (int i = 0; i < a.X; ++i) {
 		for (int j = 0; j < a.Y; ++j) {
-			out >> a.matrix[i][j];
+			out >> a.matrix[i][j];	
 		}
 	}
 	return out;
