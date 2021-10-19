@@ -435,6 +435,4 @@ ostream& operator>>(ostream& out, Matrix<T>& a) {
 }
 
 
-
-
 #endif // ! MATRIXES#pragma once
