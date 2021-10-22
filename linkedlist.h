@@ -34,6 +34,8 @@ private:
 	Node<T>* tail = nullptr;
 	int sz = 0;
 public:
+
+	Node<T>* const getHead() { return head; }
 	int size() const { return sz; }
 
 	bool isEmpty() const { return sz = 0; }
@@ -55,6 +57,11 @@ public:
 	int findVal(T val);
 
 	void debugPutOut();
+
+	const T operator[](int n);
+
+	template <typename Type> friend ostream& operator <<(ostream&, LinkedList<Type>&);
+	template <typename Type> friend LinkedList<Type>* mergeSortNew(LinkedList<Type>*);
 };
 
 template <typename T>
@@ -262,6 +269,81 @@ void LinkedList<T>::debugPutOut() {
 		curr = curr->rightptr;
 	}
 	cout << endl;
+}
+
+template <typename T>
+
+const T LinkedList<T>::operator[](int num) {
+	if (num >= sz) return nullptr;
+
+	int cnt = 0; 
+	Node<T>* curr = head;
+	while (cnt != num) {
+		curr = curr->rightptr;
+	}
+	return curr->value;
+}
+template <typename T>
+ostream& operator<<(ostream& out, LinkedList<T>& a) {
+	Node<T>* curr = a.head;
+	for (int i = 0; i < a.size(); ++i) {
+		out << curr->value << " <-> ";
+		curr = curr->rightptr;
+	}
+	return out;
+}
+
+template <typename T>
+
+LinkedList<T>* mergeSortNew(LinkedList<T>* a) {
+	if ((*a).size() == 1) return a;
+	LinkedList<T>* left = new LinkedList<T>;
+	LinkedList<T>* right = new LinkedList<T>;
+	Node<T>* curr = (*a).head;
+	for (int i = 1; i <= (*a).size() / 2; ++i) {
+		(*left).addBack(curr->value);
+		curr = curr->rightptr;
+	}
+	for (int i = (*a).size() / 2 + 1; i <= (*a).size(); ++i) {
+		(*right).addBack(curr->value);
+		if (curr->rightptr != nullptr) curr = curr->rightptr;
+	}
+
+	LinkedList<T>* leftMerge;
+	LinkedList<T>* rightMerge;
+	leftMerge = mergeSortNew(left);
+	rightMerge = mergeSortNew(right);
+
+	Node<T>* leftCurr = (*leftMerge).getHead();
+
+	Node<T>* rightCurr = (*rightMerge).getHead();
+
+	LinkedList<T>* ans = new LinkedList<T>;
+
+	while (leftCurr != nullptr && rightCurr != nullptr) {
+		if (leftCurr->value > rightCurr->value) {
+			(*ans).addBack(leftCurr->value);
+			leftCurr = leftCurr->rightptr;
+		}
+		else {
+			(*ans).addBack(rightCurr->value);
+			rightCurr = rightCurr->rightptr;
+		}
+	}
+	if (leftCurr == nullptr) {
+		while (rightCurr != nullptr) {
+			(*ans).addBack(rightCurr->value);
+			rightCurr = rightCurr->rightptr;
+		}
+	}
+	if (rightCurr == nullptr) {
+		while (leftCurr != nullptr) {
+			(*ans).addBack(leftCurr->value);
+			leftCurr = leftCurr->rightptr;
+		}
+	}
+
+	return ans;
 }
 
 
