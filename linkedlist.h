@@ -16,7 +16,7 @@ using namespace std;
 template <typename T>
 class Node {
 public:
-	Node* leftptr; 
+	Node* leftptr;
 	Node* rightptr;
 	T value;
 	Node(T value, Node* newLeft);
@@ -79,7 +79,7 @@ Node<T>::Node(T val, Node* newLeft, Node* newRight) {
 	rightptr = newRight;
 }
 template <typename T>
-Node<T>::Node( Node* newLeft, Node* newRight) {
+Node<T>::Node(Node* newLeft, Node* newRight) {
 	leftptr = newLeft;
 	rightptr = newRight;
 }
@@ -247,7 +247,7 @@ void LinkedList<T>::deleteVal(T value) {
 	}
 }
 
-template <typename T> 
+template <typename T>
 int LinkedList<T>::findVal(T value) {
 	Node<T>* curr = head;
 	if (sz == 0) return -1;
@@ -276,7 +276,7 @@ template <typename T>
 const T LinkedList<T>::operator[](int num) {
 	if (num >= sz) return nullptr;
 
-	int cnt = 0; 
+	int cnt = 0;
 	Node<T>* curr = head;
 	while (cnt != num) {
 		curr = curr->rightptr;
