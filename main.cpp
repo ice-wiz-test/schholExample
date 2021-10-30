@@ -16,75 +16,66 @@
 using namespace std;
 const int INF = 1e13 + 8;
 const int mod = 998244353;
+vector<int> helper;
+int score = 0;
+LinkedList<int> ll;
 
-signed main() {	
-	LinkedList<int> ll;
-	cout << "Welcome to the program. At the moment, you have an empty linked list. We support the following commands:" << endl;
-	cout << "push_front x -  we will make x the front element" << endl;
-	cout << "push_back x -  we will make x the last element" << endl;
-	cout << "pop_front -  we will delete the front element" << endl;
-	cout << "pop_back -  we will delete the last element" << endl;
+void playGame() {
+	cout << " !!!! WELCOME TO THE GAME !!!!" << endl;
+	cout << ll << endl;
 
-	cout << "find_val x -  we will find the index of value x, or return -1, if it does not exist" << endl;
-	cout << "add_index x y - we will either say to you that you are out of bounds, or insert y to the xth INDEX (numerated from 0)" << endl;
-	cout << "delete_val x -  we will delete the first instance of vaue appearing" << endl;
-	cout << "delete_index x -  we will delete the value by index" << endl;
-	cout << "At the moment, this works only with ints" << endl;
-	cout << "type EXIT if you want to exit the program" << endl;
+	cout << " !!!! IF YOU GET 3 CONSECUTIVE SAME COLORS, THEY WILL DELETE THEMSELVES !!!! " << endl;
+
+	cout << " !!!! AT THE BEGINNING, YOU ARE POSITIONED AT THE START !!!!" << endl;
+
+	cout << "The rules are simple - you get the number of the next number" << endl;
+	cout << "Then you output one number from -5 to 5 - whcih signifies the distance from the current moment to where you wish to insert it" << endl;
+	cout << "Notice that it will be inserted before the specified reference, so you cannot insert to the end. This is done for balance reasons" << endl;
+	ll.setCur();
+	int pos = 11;
 	while (true) {
-		string s;
-		cin >> s;
-		if (s == "pop_front") {
-			ll.deleteFront();
-			cout << ll << endl;
+		int dist = 0;
+		cout << ll << endl;
+
+		cout << " NEW ELEMENT IS " << helper[pos] << endl;
+		pos++;
+		cin >> dist;
+		cout << dist << endl;
+		if (dist < 0) {
+			while (dist < 0) {
+				ll.pushCurLeft();
+				dist++;
+			}
 		}
-		if (s == "pop_back") {
-			ll.deleteBack();
-			cout << ll << endl;
-		}
-		if (s == "push_front") {
-			int temp = 0;
-			cin >> temp;
-			ll.addFront(temp);
-			cout << ll << endl;
-		}
-		if (s == "push_back") {
-			int temp = 0;
-			cin >> temp;
-			ll.addBack(temp);
-			cout << ll << endl;
+		else {
+			while (dist > 0) {
+				ll.pushCurRight();
+				dist--;
+			}
 		}
 
-		if (s == "find_val") {
-			int temp = 0;
-			cin >> temp;
-			cout << ll.findVal(temp) << endl;
-		}
+		//ll.addCurrent(helper[pos]); //the problem with the loop lies here
+		cout << "HERE" << endl;
+		score = score + ll.recalc();
 
-		if (s == "delete_val") {
-			int temp = 0;
-			cin >> temp;
-			ll.deleteVal(temp);
-			cout << ll << endl;
-		}
-
-		if (s == "add_index") {
-			int fir = 0,
-				sec = 0;
-			cin >> fir >> sec;
-			ll.addIndex(fir, sec);
-			cout << ll << endl;
-		}
-		if (s == "add_index") {
-			int fir = 0;
-			cin >> fir;
-			ll.deleteIndex(fir);
-			cout << ll << endl;
-		}
-		if (s == "EXIT") break;
-
+		cout << " !!!! THE CURRENT SCORE IS !!!!" << score << endl;
 
 
 	}
+}
 
+signed main() {	
+	helper.assign(1e6, 0);
+
+	for (int i = 0; i < 1e6; ++i) {
+		helper[i] = rand();
+		helper[i] = helper[i] % 4;
+	}
+
+	for (int i = 0; i < 10; ++i) {
+		ll.addFront(helper[i]);
+	}
+
+		playGame();
+	
 }

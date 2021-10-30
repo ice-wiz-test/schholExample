@@ -32,10 +32,12 @@ class LinkedList {
 private:
 	Node<T>* head = nullptr;
 	Node<T>* tail = nullptr;
+	Node<T>* cur = nullptr;
 	int sz = 0;
 public:
-
 	Node<T>* const getHead() { return head; }
+	void coutCur()  { cout << cur->value; }
+	void setCur()  { cur = head; }
 	int size() const { return sz; }
 
 	bool isEmpty() const { return sz = 0; }
@@ -44,7 +46,15 @@ public:
 
 	void addBack(T value);
 
+	void addCurrent(T value);
+
 	void deleteFront();
+
+	int recalc();
+
+	void pushCurRight();
+
+	void pushCurLeft();
 
 	void deleteBack();
 
@@ -100,6 +110,7 @@ void LinkedList<T>::addFront(T value) {
 	}
 	else {
 		Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
+		cur = pnode;
 		head = pnode;
 		tail = pnode;
 		sz++;
@@ -121,6 +132,7 @@ void LinkedList<T>::addBack(T value) {
 	}
 	else {
 		Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
+		cur = pnode;
 		tail = pnode;
 		head = pnode;
 		sz++;
@@ -247,29 +259,6 @@ void LinkedList<T>::deleteVal(T value) {
 	}
 }
 
-template <typename T>
-int LinkedList<T>::findVal(T value) {
-	Node<T>* curr = head;
-	if (sz == 0) return -1;
-
-	int cnt = 0;
-	while (curr->value != value) {
-		curr = curr->rightptr;
-		cnt++;
-	}
-	if (cnt == sz) return -1;
-	return cnt;
-}
-
-template <typename T>
-void LinkedList<T>::debugPutOut() {
-	Node<T>* curr = head;
-	while (curr != nullptr) {
-		cout << curr->value << " <-> ";
-		curr = curr->rightptr;
-	}
-	cout << endl;
-}
 
 template <typename T>
 
@@ -346,5 +335,52 @@ LinkedList<T>* mergeSortNew(LinkedList<T>* a) {
 	return ans;
 }
 
+
+template <typename T>
+
+void LinkedList<T>::addCurrent(T value) {
+	if (sz == 0) return;
+
+	Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
+
+	if (cur->leftptr == nullptr) {
+		cur->leftptr = pnode;
+		pnode->rightptr = cur;
+	}
+	else {
+		pnode->leftptr = cur->leftptr;
+		pnode->rightptr = cur->leftptr;
+		cur->leftptr->rightptr = pnode;
+		cur->leftptr = pnode;
+	}
+
+	return;
+
+}
+template <typename T>
+
+void LinkedList<T>::pushCurLeft() {
+	if (cur->leftptr != nullptr) cur = cur->leftptr;
+}
+
+template <typename T>
+void LinkedList<T>::pushCurRight() {
+	if (cur->rightptr != nullptr) cur = cur->rightptr;
+}
+
+template <typename T> 
+
+int LinkedList<T>::recalc() {
+	Node < T>* pnode = head;
+	Node<T>* help;
+	int ans = 0;
+	while (pnode->rightptr != nullptr && pnode != nullptr) {
+		cout << pnode->value << endl;
+		pnode = pnode->rightptr;
+	}
+
+	return ans;
+
+}
 
 #endif	// ! LINKEDLIST#pragma once
