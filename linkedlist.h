@@ -342,17 +342,22 @@ void LinkedList<T>::addCurrent(T value) {
 	if (sz == 0) return;
 
 	Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
-
+	
 	if (cur->leftptr == nullptr) {
-		cur->leftptr = pnode;
 		pnode->rightptr = cur;
+		cur->leftptr = pnode;
+		head = pnode;
 	}
 	else {
+		pnode->rightptr = cur;
 		pnode->leftptr = cur->leftptr;
-		pnode->rightptr = cur->leftptr;
 		cur->leftptr->rightptr = pnode;
 		cur->leftptr = pnode;
 	}
+
+
+	cout << " CUR IS EXACTLY THE FOLLOWING: " << endl;
+	cout << cur->leftptr->value << " <- " << cur->value << " -> " << cur->rightptr->value << endl;
 
 	return;
 
@@ -375,8 +380,26 @@ int LinkedList<T>::recalc() {
 	Node<T>* help;
 	int ans = 0;
 	while (pnode->rightptr != nullptr && pnode != nullptr) {
-		cout << pnode->value << endl;
 		pnode = pnode->rightptr;
+		if (pnode->leftptr != nullptr && pnode->rightptr != nullptr) {
+			if (pnode->leftptr->value == pnode->rightptr->value && pnode->value == pnode->rightptr->value) {
+				ans = ans + 3;
+				if (pnode->leftptr->leftptr == nullptr) {
+					head = pnode->rightptr->rightptr;
+					head->rightptr = pnode->rightptr->rightptr->rightptr;
+				}
+				else {
+					if (pnode->rightptr->rightptr == nullptr) {
+						tail = pnode->leftptr->leftptr;
+						head->leftptr = pnode->leftptr->leftptr->leftptr;
+					}
+					else {
+						pnode->leftptr->leftptr->rightptr = pnode->rightptr->rightptr;
+						pnode->rightptr->rightptr->leftptr = pnode->leftptr->leftptr;
+					}
+				}
+			}
+		}
 	}
 
 	return ans;

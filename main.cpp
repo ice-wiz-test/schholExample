@@ -33,14 +33,16 @@ void playGame() {
 	cout << "Notice that it will be inserted before the specified reference, so you cannot insert to the end. This is done for balance reasons" << endl;
 	ll.setCur();
 	int pos = 11;
+	int curroffset = 0;
 	while (true) {
 		int dist = 0;
 		cout << ll << endl;
-
 		cout << " NEW ELEMENT IS " << helper[pos] << endl;
-		pos++;
 		cin >> dist;
-		cout << dist << endl;
+		curroffset = curroffset + dist;
+		curroffset = max(0ll, curroffset);
+		curroffset = min(curroffset, 10ll);
+		cout << " CURRENT OFFSET " << curroffset << endl;
 		if (dist < 0) {
 			while (dist < 0) {
 				ll.pushCurLeft();
@@ -51,16 +53,37 @@ void playGame() {
 			while (dist > 0) {
 				ll.pushCurRight();
 				dist--;
+				
 			}
 		}
-
-		//ll.addCurrent(helper[pos]); //the problem with the loop lies here
-		cout << "HERE" << endl;
+		cout << helper[pos] << " ELEM" << endl;
+		ll.addCurrent(helper[pos]); //the problem with the loop lies here
 		score = score + ll.recalc();
 
-		cout << " !!!! THE CURRENT SCORE IS !!!!" << score << endl;
+		cout << " !!!! THE CURRENT SCORE IS " << score << " !!!! " << endl;
+		pos++;
+		if (score >= 30) break;
+	}
+
+	cout << "YOU WON !!!!" << endl;
+}
 
 
+void playGameBot() {
+	cout << "Use this function to test the bot" << endl;
+	int pos = 12;
+	ll.setCur();
+	while (true) {
+		if (pos > 1e5) break;
+		cout << helper[pos] << endl;
+		ll.addCurrent(helper[pos]);
+		score = score + ll.recalc();
+
+		cout << " !!!! THE CURRENT SCORE IS " << score << " !!!! " << endl;
+		if (score >= 30) break;
+		pos++;
+
+		ll.pushCurLeft();
 	}
 }
 
@@ -76,6 +99,6 @@ signed main() {
 		ll.addFront(helper[i]);
 	}
 
-		playGame();
-	
+		//playGame();
+		//playGameBot();
 }
