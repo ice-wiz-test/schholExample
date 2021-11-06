@@ -1,3 +1,5 @@
+#ifndef LINKEDLIST
+#define LINKEDLIST
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -10,99 +12,398 @@
 #include <deque>
 #include <string>
 #include <ctime>
-#include "linkedlist.h"
-
-#define int long long
 using namespace std;
-const int INF = 1e13 + 8;
-const int mod = 998244353;
-vector<int> helper;
-int score = 0;
-LinkedList<int> ll;
+template <typename T>
+class Node {
+public:
+	Node* leftptr;
+	Node* rightptr;
+	T value;
+	Node(T value, Node* newLeft);
 
-void playGame() {
-	cout << " !!!! WELCOME TO THE GAME !!!!" << endl;
-	cout << ll << endl;
+	Node(T value, Node* newLeft, Node* newRight);
 
-	cout << " !!!! IF YOU GET 3 CONSECUTIVE SAME COLORS, THEY WILL DELETE THEMSELVES !!!! " << endl;
+	Node(Node* newLeft, Node* newRight);
+};
 
-	cout << " !!!! AT THE BEGINNING, YOU ARE POSITIONED AT THE START !!!!" << endl;
+template <typename T>
+//TODO - this could be optimized if we look where are we closer to, head or tail.
+class LinkedList {
+private:
+	Node<T>* head = nullptr;
+	Node<T>* tail = nullptr;
+	Node<T>* cur = nullptr;
+	int sz = 0;
+public:
+	Node<T>* const getHead() { return head; }
+	void coutCur()  { cout << cur->value; }
+	void setCur()  { cur = head; }
+	int size() const { return sz; }
 
-	cout << "The rules are simple - you get the number of the next number" << endl;
-	cout << "Then you output one number from -5 to 5 - whcih signifies the distance from the current moment to where you wish to insert it" << endl;
-	cout << "Notice that it will be inserted before the specified reference, so you cannot insert to the end. This is done for balance reasons" << endl;
-	ll.setCur();
-	int pos = 11;
-	int curroffset = 0;
-	while (true) {
-		int dist = 0;
-		cout << ll << endl;
-		cout << " NEW ELEMENT IS " << helper[pos] << endl;
-		cin >> dist;
-		curroffset = curroffset + dist;
-		curroffset = max(0ll, curroffset);
-		curroffset = min(curroffset, 10ll);
-		cout << " CURRENT OFFSET " << curroffset << endl;
-		bool right = true;
-		if (dist < 0) {
-			while (dist < 0) {
-				ll.pushCurLeft();
-				dist++;
-			}
-			right = false;
+	bool isEmpty() const { return sz = 0; }
+
+	void addFront(T value);
+
+	void addBack(T value);
+
+	void addCurrent(T value);
+
+	void deleteFront();
+
+	int recalc();
+
+	void pushCurRight();
+
+	void pushCurLeft();
+
+	void deleteBack();
+
+	void addIndex(int index, T val);
+
+	void deleteIndex(int index);
+
+	void deleteVal(T val);
+
+	int findVal(T val);
+
+	void debugPutOut();
+
+	const T operator[](int n);
+
+	template <typename Type> friend ostream& operator <<(ostream&, LinkedList<Type>&);
+	template <typename Type> friend LinkedList<Type>* mergeSortNew(LinkedList<Type>*);
+};
+
+template <typename T>
+
+Node<T>::Node(T val, Node* newLeft) {
+	value = val;
+	leftptr = newLeft;
+}
+
+template <typename T>
+
+Node<T>::Node(T val, Node* newLeft, Node* newRight) {
+	value = val;
+	leftptr = newLeft;
+	rightptr = newRight;
+}
+template <typename T>
+Node<T>::Node(Node* newLeft, Node* newRight) {
+	leftptr = newLeft;
+	rightptr = newRight;
+}
+
+
+template <typename T>
+
+void LinkedList<T>::addFront(T value) {
+	if (head != nullptr) {
+		Node<T>* hd = head;
+
+		Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
+		hd->leftptr = pnode;
+
+		pnode->rightptr = hd;
+		head = pnode;
+		sz++;
+	}
+	else {
+		Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
+		cur = pnode;
+		head = pnode;
+		tail = pnode;
+		sz++;
+	}
+}
+
+template <typename T>
+
+void LinkedList<T>::addBack(T value) {
+	if (tail != nullptr) {
+		Node<T>* tl = tail;
+
+		Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
+		tl->rightptr = pnode;
+
+		pnode->leftptr = tl;
+		tail = pnode;
+		sz++;
+	}
+	else {
+		Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
+		cur = pnode;
+		tail = pnode;
+		head = pnode;
+		sz++;
+	}
+}
+
+template <typename T>
+
+void LinkedList<T>::deleteFront() {
+	if (sz == 1) {
+		delete head;
+		head = nullptr;
+		tail = nullptr;
+		sz--;
+	}
+	else {
+		sz--;
+		Node<T>* pnode = head->rightptr;
+		delete head;
+		pnode->leftptr = nullptr;
+		head = pnode;
+		if (sz == 0) tail = nullptr;
+	}
+}
+
+
+template <typename T>
+
+void LinkedList<T>::deleteBack() {
+	if (sz == 1) {
+		delete tail;
+		tail = nullptr;
+		head = nullptr;
+		sz--;
+	}
+	else {
+		sz--;
+		Node<T>* pnode = tail->leftptr;
+		delete tail;
+		tail = pnode;
+		pnode->leftptr = nullptr;
+		if (sz == 0) head = nullptr;
+	}
+}
+
+template <typename T>
+void LinkedList<T>::addIndex(int index, T value) {
+	if (index >= sz) return;
+
+	int cnt = 0;
+	Node<T>* curr = head;
+	while (cnt != index) {
+		curr = curr->rightptr;
+		cnt++;
+	}
+	if (index == 0) {
+		addFront(value);
+		return;
+	}
+	if (index == sz) {
+		addBack(value);
+		return;
+	}
+
+	Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
+	pnode->leftptr = curr->leftptr;
+	pnode->rightptr = curr;
+	Node<T>* lft = curr->leftptr;
+	lft->rightptr = pnode;
+	curr->leftptr = pnode;
+	sz++;
+	return;
+}
+
+template <typename T>
+
+void LinkedList<T>::deleteIndex(int index) {
+	if (index == 0) {
+		deleteFront();
+		return;
+	}
+
+	if (index == sz - 1) {
+		deleteBack();
+		return;
+	}
+
+	if (index > sz - 1) return;
+
+	int cnt = 0;
+	Node<T>* curr = head;
+	while (cnt != index) {
+		curr = curr->rightptr;
+		cnt++;
+	}
+
+	(curr->leftptr)->rightptr = curr->rightptr;
+	(curr->rightptr)->leftptr = curr->leftptr;
+	sz--;
+	return;
+}
+
+template <typename T>
+void LinkedList<T>::deleteVal(T value) {
+	while (sz > 0 && head->value == value) {
+		head->rightptr->leftptr = nullptr;
+		delete head;
+		sz--;
+	}
+	while (sz > 0 && tail->value == value) {
+		tail->leftptr->rightptr = nullptr;
+		delete tail;
+		sz--;
+	}
+
+	Node<T>* curr = head;
+	while (curr != nullptr) {
+		if (curr->value == value) {
+			(curr->leftptr)->rightptr = curr->rightptr;
+			(curr->rightptr)->leftptr = curr->leftptr;
+			sz--;
+		}
+		curr = curr->rightptr;
+	}
+}
+
+
+template <typename T>
+
+const T LinkedList<T>::operator[](int num) {
+	if (num >= sz) return nullptr;
+
+	int cnt = 0;
+	Node<T>* curr = head;
+	while (cnt != num) {
+		curr = curr->rightptr;
+	}
+	return curr->value;
+}
+template <typename T>
+ostream& operator<<(ostream& out, LinkedList<T>& a) {
+	Node<T>* curr = a.head;
+	for (int i = 0; i < a.size(); ++i) {
+		out << curr->value << " <-> ";
+		curr = curr->rightptr;
+	}
+	return out;
+}
+
+template <typename T>
+
+LinkedList<T>* mergeSortNew(LinkedList<T>* a) {
+	if ((*a).size() == 1) return a;
+	LinkedList<T>* left = new LinkedList<T>;
+	LinkedList<T>* right = new LinkedList<T>;
+	Node<T>* curr = (*a).head;
+	for (int i = 1; i <= (*a).size() / 2; ++i) {
+		(*left).addBack(curr->value);
+		curr = curr->rightptr;
+	}
+	for (int i = (*a).size() / 2 + 1; i <= (*a).size(); ++i) {
+		(*right).addBack(curr->value);
+		if (curr->rightptr != nullptr) curr = curr->rightptr;
+	}
+
+	LinkedList<T>* leftMerge;
+	LinkedList<T>* rightMerge;
+	leftMerge = mergeSortNew(left);
+	rightMerge = mergeSortNew(right);
+
+	Node<T>* leftCurr = (*leftMerge).getHead();
+
+	Node<T>* rightCurr = (*rightMerge).getHead();
+
+	LinkedList<T>* ans = new LinkedList<T>;
+
+	while (leftCurr != nullptr && rightCurr != nullptr) {
+		if (leftCurr->value > rightCurr->value) {
+			(*ans).addBack(leftCurr->value);
+			leftCurr = leftCurr->rightptr;
 		}
 		else {
-			while (dist > 0) {
-				ll.pushCurRight();
-				dist--;
-				
+			(*ans).addBack(rightCurr->value);
+			rightCurr = rightCurr->rightptr;
+		}
+	}
+	if (leftCurr == nullptr) {
+		while (rightCurr != nullptr) {
+			(*ans).addBack(rightCurr->value);
+			rightCurr = rightCurr->rightptr;
+		}
+	}
+	if (rightCurr == nullptr) {
+		while (leftCurr != nullptr) {
+			(*ans).addBack(leftCurr->value);
+			leftCurr = leftCurr->rightptr;
+		}
+	}
+
+	return ans;
+}
+
+
+template <typename T>
+
+void LinkedList<T>::addCurrent(T value) {
+	if (sz == 0) return;
+
+	Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
+	
+	if (cur->leftptr == nullptr) {
+		pnode->rightptr = cur;
+		cur->leftptr = pnode;
+		head = pnode;
+	}
+	else {
+		pnode->rightptr = cur;
+		pnode->leftptr = cur->leftptr;
+		cur->leftptr->rightptr = pnode;
+		cur->leftptr = pnode;
+	}
+
+
+	cout << " CUR IS EXACTLY THE FOLLOWING: " << endl;
+	cout << cur->leftptr->value << " <- " << cur->value << " -> " << cur->rightptr->value << endl;
+
+	return;
+
+}
+template <typename T>
+
+void LinkedList<T>::pushCurLeft() {
+	if (cur->leftptr != nullptr) cur = cur->leftptr;
+}
+
+template <typename T>
+void LinkedList<T>::pushCurRight() {
+	if (cur->rightptr != nullptr) cur = cur->rightptr;
+}
+
+template <typename T> 
+
+int LinkedList<T>::recalc() {
+	Node < T>* pnode = head;
+	Node<T>* help;
+	int ans = 0;
+	while (pnode->rightptr != nullptr && pnode != nullptr) {
+		pnode = pnode->rightptr;
+		if (pnode->leftptr != nullptr && pnode->rightptr != nullptr) {
+			if (pnode->leftptr->value == pnode->rightptr->value && pnode->value == pnode->rightptr->value) {
+				ans = ans + 3;
+				if (pnode->leftptr->leftptr == nullptr) {
+					head = pnode->rightptr->rightptr;
+					head->rightptr = pnode->rightptr->rightptr->rightptr;
+				}
+				else {
+					if (pnode->rightptr->rightptr == nullptr) {
+						tail = pnode->leftptr->leftptr;
+						head->leftptr = pnode->leftptr->leftptr->leftptr;
+					}
+					else {
+						pnode->leftptr->leftptr->rightptr = pnode->rightptr->rightptr;
+						pnode->rightptr->rightptr->leftptr = pnode->leftptr->leftptr;
+					}
+				}
 			}
 		}
-		cout << helper[pos] << " ELEM" << endl;
-		ll.addCurrent(helper[pos]); //the problem with the loop lies here
-		score = score + ll.recalc();
-		if (right) ll.pushCurLeft();
-		else ll.pushCurRight();
-
-		cout << " !!!! THE CURRENT SCORE IS " << score << " !!!! " << endl;
-		pos++;
-		if (score >= 30) break;
 	}
 
-	cout << "YOU WON !!!!" << endl;
+	return ans;
+
 }
 
-
-void playGameBot() {
-	cout << "Use this function to test the bot" << endl;
-	int pos = 12;
-	ll.setCur();
-	while (true) {
-		if (pos > 1e5) break;
-		cout << helper[pos] << endl;
-		ll.addCurrent(helper[pos]);
-		score = score + ll.recalc();
-
-		cout << " !!!! THE CURRENT SCORE IS " << score << " !!!! " << endl;
-		if (score >= 30) break;
-		pos++;
-
-		ll.pushCurLeft();
-	}
-}
-
-signed main() {	
-	helper.assign(1e6, 0);
-
-	for (int i = 0; i < 1e6; ++i) {
-		helper[i] = rand();
-		helper[i] = helper[i] % 4;
-	}
-
-	for (int i = 0; i < 10; ++i) {
-		ll.addFront(helper[i]);
-	}
-
-		//playGame();
-		//playGameBot();
-}
+#endif	// ! LINKEDLIST#pragma once
