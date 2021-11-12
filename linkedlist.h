@@ -38,9 +38,13 @@ public:
 	Node<T>* const getHead() { return head; }
 	void coutCur()  { cout << cur->value; }
 	void setCur()  { cur = head; }
+	bool isEqual() { return cur = head; }
+
 	int size() const { return sz; }
 
 	bool isEmpty() const { return sz = 0; }
+
+	T getCurVal() { return cur->value; }
 
 	void addFront(T value);
 
@@ -68,6 +72,8 @@ public:
 
 	void debugPutOut();
 
+	void TrimDown();
+
 	const T operator[](int n);
 
 	template <typename Type> friend ostream& operator <<(ostream&, LinkedList<Type>&);
@@ -76,20 +82,20 @@ public:
 
 template <typename T>
 
-Node<T>::Node(T val, Node* newLeft) {
+Node<T>::Node(T val, Node<T>* newLeft) {
 	value = val;
 	leftptr = newLeft;
 }
 
 template <typename T>
 
-Node<T>::Node(T val, Node* newLeft, Node* newRight) {
+Node<T>::Node(T val, Node<T>* newLeft, Node<T>* newRight) {
 	value = val;
 	leftptr = newLeft;
 	rightptr = newRight;
 }
 template <typename T>
-Node<T>::Node(Node* newLeft, Node* newRight) {
+Node<T>::Node(Node<T>* newLeft, Node<T>* newRight) {
 	leftptr = newLeft;
 	rightptr = newRight;
 }
@@ -275,10 +281,11 @@ const T LinkedList<T>::operator[](int num) {
 template <typename T>
 ostream& operator<<(ostream& out, LinkedList<T>& a) {
 	Node<T>* curr = a.head;
-	for (int i = 0; i < a.size(); ++i) {
+	while (curr->rightptr != nullptr) {
 		out << curr->value << " <-> ";
 		curr = curr->rightptr;
 	}
+	out << curr->value << endl;
 	return out;
 }
 
@@ -340,24 +347,23 @@ template <typename T>
 
 void LinkedList<T>::addCurrent(T value) {
 	if (sz == 0) return;
-
-	Node<T>* pnode = new Node<T>(value, nullptr, nullptr);
+	cout << cur->leftptr << " " << cur->value << " " << cur->rightptr << endl;
+	Node<T>* pnode = new Node<T>(value, cur->leftptr, cur);
 	
 	if (cur->leftptr == nullptr) {
-		pnode->rightptr = cur;
 		cur->leftptr = pnode;
 		head = pnode;
 	}
 	else {
-		pnode->rightptr = cur;
-		pnode->leftptr = cur->leftptr;
 		cur->leftptr->rightptr = pnode;
+		if (pnode->value != cur->leftptr->rightptr->value) cout << " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
 		cur->leftptr = pnode;
+		cur->leftptr->rightptr = cur;
 	}
 
+	sz++;
 
-	cout << " CUR IS EXACTLY THE FOLLOWING: " << endl;
-	cout << cur->leftptr->value << " <- " << cur->value << " -> " << cur->rightptr->value << endl;
+	cout << sz << " NENDNEND" << endl;
 
 	return;
 
@@ -365,12 +371,24 @@ void LinkedList<T>::addCurrent(T value) {
 template <typename T>
 
 void LinkedList<T>::pushCurLeft() {
-	if (cur->leftptr != nullptr) cur = cur->leftptr;
+	if (cur->leftptr != nullptr && cur != head) cur = cur->leftptr;
 }
 
 template <typename T>
 void LinkedList<T>::pushCurRight() {
 	if (cur->rightptr != nullptr) cur = cur->rightptr;
+}
+
+template <typename T>
+void LinkedList<T>::TrimDown() {
+	while (sz > 10) {
+		Node<T>* pnode = head;
+		if (head == cur) cur = cur->rightptr;
+		head = head->rightptr;
+		head->leftptr = nullptr;// here lies the first mistake
+		delete pnode;
+		sz--;
+	}
 }
 
 template <typename T> 
@@ -379,29 +397,36 @@ int LinkedList<T>::recalc() {
 	Node < T>* pnode = head;
 	Node<T>* help;
 	int ans = 0;
-	while (pnode->rightptr != nullptr && pnode != nullptr) {
+	while (pnode != nullptr && pnode->rightptr != nullptr) {
 		pnode = pnode->rightptr;
 		if (pnode->leftptr != nullptr && pnode->rightptr != nullptr) {
 			if (pnode->leftptr->value == pnode->rightptr->value && pnode->value == pnode->rightptr->value) {
 				ans = ans + 3;
-				if (pnode->leftptr->leftptr == nullptr) {
+				sz = sz - 3;
+				if (pnode->leftptr == head) {
 					head = pnode->rightptr->rightptr;
-					head->rightptr = pnode->rightptr->rightptr->rightptr;
+					head->leftptr = nullptr;
 				}
 				else {
-					if (pnode->rightptr->rightptr == nullptr) {
+					if (pnode->rightptr == tail) {
 						tail = pnode->leftptr->leftptr;
-						head->leftptr = pnode->leftptr->leftptr->leftptr;
+						tail->rightptr = nullptr;
 					}
 					else {
 						pnode->leftptr->leftptr->rightptr = pnode->rightptr->rightptr;
 						pnode->rightptr->rightptr->leftptr = pnode->leftptr->leftptr;
 					}
 				}
+				pnode = pnode->rightptr->rightptr;
+
+				
 			}
 		}
 	}
 
+	if (ans > 0) cur = head;
+
+	cout << sz << " SIZE " << endl;
 	return ans;
 
 }
