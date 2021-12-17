@@ -1,153 +1,207 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iomanip>
 #include <iostream>
-#include <fstream>
-#include <vector>
-#include <numeric>
-#include <algorithm>
-#include <set>
 #include <map>
-#include <cmath>
-#include <stack>
+#include <queue>
+#include <set>
+#include <utility>
+#include <vector>
+#include <cstdio>
+#include <random>
+#include <chrono>
 #include <deque>
-#include <string>
-#include <ctime>
-#include "linkedlist.h"
+#include <fstream>
+#include <bitset>
+#include <map>
+#include <algorithm>
+#include <stack>
+#include <cassert>
+
+using namespace std;
 
 #define int long long
-using namespace std;
-const int INF = 1e13 + 8;
-const int mod = 998244353;
-vector<int> helper;
-int score = 0;
-LinkedList<int> ll;
+#define ld long double
+#define ll long long
+const int INF = 1e13 + 5;
+const int mod = 1e9 + 7;
 
-void playGame() {
-	cout << " !!!! WELCOME TO THE GAME !!!!" << endl;
-	cout << ll << endl;
 
-	cout << " !!!! IF YOU GET 3 CONSECUTIVE SAME COLORS, THEY WILL DELETE THEMSELVES !!!! " << endl;
-
-	cout << " !!!! AT THE BEGINNING, YOU ARE POSITIONED AT THE START !!!!" << endl;
-
-	cout << "The rules are simple - you get the number of the next number" << endl;
-	cout << "Then you output one number from -5 to 5 - whcih signifies the distance from the current moment to where you wish to insert it" << endl;
-	cout << "Notice that it will be inserted before the specified reference, so you cannot insert to the end. This is done for balance reasons" << endl;
-	ll.setCur();
-	int t;
-	t = ll.getCurVal();
-	cout << t << endl;
-	int pos = 11;
-	int curroffset = 0;
-	while (true) {
-		int dist = 0;
-		cout << ll << endl;
-		for (int i = 0; i < curroffset; ++i) {
-			cout << "      ";
-		}
-		cout << "O" << endl;
-		cout << " NEW ELEMENT IS " << helper[pos] << endl;
-		cin >> dist;
-		curroffset = curroffset + dist;
-		curroffset = max(0ll, curroffset);
-		curroffset = min(curroffset, 10ll);
-		cout << " CURRENT OFFSET " << curroffset << endl;
-		bool right = true;
-		if (dist < 0) {
-			while (dist < 0) {
-				ll.pushCurLeft();
-				dist++;
-			}
-			right = false;
-		}
-		else {
-			while (dist > 0) {
-				ll.pushCurRight();
-				dist--;
-				
-			}
-		}
-		cout << helper[pos] << " ELEM" << endl;
-		ll.addCurrent(helper[pos]); //the problem with the loop lies here
-		int add = ll.recalc();
-		score = score + add;
-
-		cout << " !!!! THE CURRENT SCORE IS " << score << " !!!! " << endl;
-		pos++;
-
-		while (ll.size() < 10) {
-			pos++;
-			ll.addCurrent(helper[pos]);
-		}
-
-		ll.TrimDown();
-
-		if (add > 0) {
-			curroffset = 0;
-			cout << " WE RESET YOUR POSITION DUE TO YOU GETTING 3 COLORS IN A ROW" << endl;
-		}
-		if (score >= 30) break;
+class node {
+public:
+	int value;
+	node* left;
+	node* right;
+	int height;
+	node(int val) {
+		value = val;
+		left = nullptr;
+		right = nullptr;
+		height = 1;
 	}
 
-	cout << "YOU WON !!!!" << endl;
+};
+typedef node* pnode;
+class Tree{
+    public:
+    pnode root;
+    int pointerHeight(pnode p);
+    int fact(pnode p);
+    void correctHeight(pnode p);
+    pnode turnRight(pnode p);
+    pnode turnLeft(pnode p);
+    pnode balance(pnode p);
+    pnode insertTree(pnode p, int val);
+    pnode findMin(pnode p);
+    pnode searchAndDestroyMin(pnode p);
+    pnode removeKey(pnode p, int val);
+    pnode findKey(pnode p, int val);
+    void printOUT(pnode p);
+    Tree() {
+        root = nullptr;
+    }
+};
+int Tree::pointerHeight(pnode p) {
+    if(p == nullptr) return 0;
+    return p->height;
 }
 
-
-void playGameBot() {
-	cout << "Use this function to test the bot" << endl;
-	int pos = 12;
-	ll.setCur();
-	ll.pushCurRight();
-	ll.pushCurRight();
-	ll.pushCurRight();
-	ll.pushCurRight();
-
-	int score = 0;
-	int iter = 0;
-	while (true) {
-		iter++;
-		if (iter % 10 == 0) {
-			int brk;
-			cin >> brk;
-		}
-		cout << ll << endl;
-		int temp = helper[pos];		
-		pos++;
-
-		if (ll.isEqual()) {
-			ll.pushCurRight();
-			ll.pushCurRight();
-		}
-
-		cout << " CURRENT ELEMENT IS -  " << temp << endl;
-
-		ll.addCurrent(temp);
-
-		score = score + ll.recalc();
-		ll.TrimDown();
-		while (ll.size() < 10) {
-			ll.addCurrent(helper[pos]);
-			pos++;
-		}
-		if (score > 30) break;
-		if (pos > 1e2) break;
-		cout << score << " SCORE " << endl;
-	}
+int Tree::fact(pnode p) {
+    return pointerHeight(p->right) - pointerHeight(p->left);
 }
 
-signed main() {	
-	helper.assign(1e6, 0);
+void Tree::correctHeight(pnode p) {
+    p->height = max(pointerHeight(p->left), pointerHeight(p->right)) + 1;
+}
 
-	for (int i = 0; i < 1e6; ++i) {
-		helper[i] = rand();
-		helper[i] = helper[i] % 4;
-		if (i < 20) cout << helper[i] << endl;
-	}
+pnode Tree::turnRight(pnode p)// правый поворот вокруг p
+{
+	pnode q = p->left;
+	p->left = q->right;
+	q->right = p;
+	Tree::correctHeight(p);
+	Tree::correctHeight(q);
+	return q;
+}
+pnode Tree::turnLeft(pnode q) {
+    pnode p = q->right;
+	q->right = p->left;
+	p->left = q;
+	Tree::correctHeight(q);
+	Tree::correctHeight(p);
+	return p;
+}
 
-	for (int i = 0; i < 10; ++i) {
-		ll.addFront(helper[i]);
-	}
-	cout << ll;
-	ll.addCurrent(1);
-	cout << ll;
-		playGame();
-		//playGameBot(); // bot pryamo 100% rabotaet, zub dayu
+pnode Tree::balance(pnode p) {
+    correctHeight(p);
+    if(fact(p) == 2) {
+        if(fact(p->right) < 0 ) {
+            p->right = turnRight(p->right);
+        }
+        return turnLeft(p);
+    }
+    if(fact(p) == -2) {
+        if(fact(p->left) > 0) {
+            p->left = turnLeft(p->left);
+        }
+        return turnRight(p);
+    }
+    return p;
+}
+
+pnode Tree::insertTree(pnode p, int value) {
+    if(p == nullptr) return new node(value);
+    if(value < p->value) p->left = insertTree(p->left, value);
+    else p->right = insertTree(p->right, value);
+    return balance(p);
+}
+
+pnode Tree::findMin(pnode p) {
+    if(p->left == nullptr) return p;
+    return p->left;
+}
+
+pnode Tree::searchAndDestroyMin(pnode p) {
+    if(p->left == nullptr) return p->right;
+    p->left = Tree::searchAndDestroyMin(p->left);
+    return balance(p);
+}
+
+pnode Tree::findKey(pnode p, int value) {
+    if(p ==  nullptr) return p;
+    if(p->value == value) return p;
+    if(p->value > value) return findKey(p->left, value);
+    else return findKey(p->right, value);
+}
+
+pnode Tree::removeKey(pnode p, int value) {
+    if(!p) return nullptr;
+    if(value < p->value) {
+        p->left = removeKey(p->left, value);
+    } else {
+        if(value > p->value) {
+            p->right = removeKey(p->right, value);
+        } else {
+            pnode q = p->left;
+            pnode r = p->right;
+            delete p;
+            if(r ==  nullptr) return q;
+            pnode mn = Tree::findMin(r);
+            mn->right = searchAndDestroyMin(r);
+            mn->left = q;
+            return balance(mn);
+        }
+    }
+}
+
+void Tree::printOUT(pnode p) {
+    if(p->right !=  nullptr) {
+        cout << p->right->value << " RIGHT VALUE. ";
+    }
+    if(p->left !=  nullptr) {
+        cout << p->left->value << " LEFT VALUE. ";
+    }
+    cout << p->value << " VALUE." << endl;
+    if(p->right != nullptr) Tree::printOUT(p->right);
+    if(p->left !=  nullptr) Tree::printOUT(p->left);
+}
+/*
+    if the question arises, the function to delete the minimal element is searchAndDestroyMin, and call iot from the root
+*/
+void solve() {
+
+    cout << " Welcome to the AVL TREE!!! If you wish to exit, enter -1" << endl;
+    cout << "To delete the minimal element, enter 11. To enter a new value, enter 12 followed by your number" << endl;
+    cout << "To delete by key, enter 13 followed by your element. To print the tree, enter 14" << endl;
+    Tree t = Tree();
+    while(true) {
+        int input = 0;
+        cin >> input;
+        if(input == -1) break;
+        if(input == 11) {
+                if(t.root == nullptr) cout << "Why would you do that." << endl;
+                else t.root = t.searchAndDestroyMin(t.root);
+        }
+        if(input == 12) {
+            int tmp = 0;
+            cin >> tmp;
+            t.root = t.insertTree(t.root, tmp);
+        }
+        if(input == 13) {
+            int tmp = 0;
+            cin >> tmp;
+            t.root = t.removeKey(t.root, tmp);
+        }
+        if(input == 14) {
+            if(t.root == nullptr) cout << "That is not very nice of you to do." << endl;
+            else t.printOUT(t.root);
+        }
+    }
+
+}
+
+signed main() {
+	cin.tie(0);
+	cout.tie(0);
+	ios::sync_with_stdio(false);
+	solve();
 }
