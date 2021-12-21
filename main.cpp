@@ -155,12 +155,14 @@ pnode Tree::removeKey(pnode p, int value) {
 
 void Tree::printOUT(pnode p) {
     if(p->right !=  nullptr) {
-        cout << p->right->value << " RIGHT VALUE. ";
+        cout << "The right pointer is equal to" << p->right << "; Right value is equal to " << p->right->value << endl;
     }
+    else cout << "The right pointer is nullptr" << endl;
     if(p->left !=  nullptr) {
-        cout << p->left->value << " LEFT VALUE. ";
+        cout << "The left pointer is equal to" << p->left << "; Left value is equal to " << p->left->value << endl;
     }
-    cout << p->value << " VALUE." << endl;
+            else cout << "The left pointer is nullptr" << endl;
+    cout << " The value inside the node is equal to " << p->value << endl;
     if(p->right != nullptr) Tree::printOUT(p->right);
     if(p->left !=  nullptr) Tree::printOUT(p->left);
 }
